@@ -2,7 +2,8 @@
 
 <div align="center">
 
-![PurePixels Hero](https://raw.githubusercontent.com/parinith-web/purepixels/main/screenshots/hero.png)
+![PurePixels Hero](<img width="504" height="344" alt="Frame 1 (2)" src="https://github.com/user-attachments/assets/1827a6d8-001d-4c43-a3cb-a007b59b9a49" />
+)
 
 **Remove image backgrounds in under 5 seconds — powered by high-accuracy AI segmentation.**
 
