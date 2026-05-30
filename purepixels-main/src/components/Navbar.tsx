@@ -9,7 +9,7 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -61,10 +61,6 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              <div className="px-3.5 py-1.5 rounded-full bg-secondary border border-border text-xs font-semibold flex items-center gap-1.5">
-                <span className="text-muted-foreground">Credits:</span>
-                <span className="text-pixel font-bold">{user?.credits}</span>
-              </div>
               <Button variant="ghost" className="rounded-xl flex items-center gap-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
                 Logout
@@ -105,16 +101,10 @@ export function Navbar() {
           ))}
           <div className="flex flex-col gap-2 pt-2">
             {isAuthenticated ? (
-              <>
-                <div className="px-3 py-2 rounded-xl bg-secondary border border-border text-sm font-medium flex justify-between">
-                  <span className="text-muted-foreground">Available Credits:</span>
-                  <span className="text-pixel font-bold">{user?.credits}</span>
-                </div>
-                <Button variant="destructive" size="sm" className="rounded-xl w-full flex items-center justify-center gap-1.5" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </Button>
-              </>
+              <Button variant="destructive" size="sm" className="rounded-xl w-full flex items-center justify-center gap-1.5" onClick={handleLogout}>
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
             ) : (
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" asChild className="rounded-xl flex-1">
