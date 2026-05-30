@@ -1,17 +1,19 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, Download, X, ImageIcon, Loader2, ArrowRight, ShieldCheck, AlertCircle, ChevronsLeftRight } from "lucide-react";
+import { Upload, Download, X, ImageIcon, Loader2, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { downloadImage } from "@/lib/download-image";
 
 export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [processedUrl, setProcessedUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [sliderPos, setSliderPos] = useState(50);
   const [afterBackground, setAfterBackground] = useState<"white" | "grid" | "dark">("white");
   
@@ -155,6 +157,24 @@ export default function Dashboard() {
     setFile(null);
     setPreview(null);
     setProcessedUrl(null);
+  };
+
+  const handleDownload = async () => {
+    if (!processedUrl) return;
+
+    setIsDownloading(true);
+    try {
+      await downloadImage(processedUrl, `purepixels_${Date.now()}.png`);
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast({
+        title: "Download failed",
+        description: "Could not download the image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const transparencyGridStyle = {
@@ -403,15 +423,15 @@ export default function Dashboard() {
                       <Button
                         size="lg"
                         className="bg-pixel hover:bg-pixel-dark text-navy-deep font-bold rounded-2xl px-10 h-12 shadow-glow w-full sm:w-auto"
-                        onClick={() => {
-                          const a = document.createElement("a");
-                          a.href = processedUrl;
-                          a.download = `purepixels_${Date.now()}.png`;
-                          a.click();
-                        }}
+                        onClick={handleDownload}
+                        disabled={isDownloading}
                       >
-                        <Download className="mr-2 h-4 w-4" />
-                        Download transparent PNG
+                        {isDownloading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Download className="mr-2 h-4 w-4" />
+                        )}
+                        {isDownloading ? "Downloading..." : "Download transparent PNG"}
                       </Button>
                     ) : (
                       <div className="w-full text-center space-y-4">

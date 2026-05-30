@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Trash2, Calendar, FileImage, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { downloadImage } from "@/lib/download-image";
 
 interface ImageRecord {
   _id: string;
@@ -19,6 +20,7 @@ export default function History() {
   const [images, setImages] = useState<ImageRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -73,6 +75,22 @@ export default function History() {
       toast({ title: "Connection Error", description: "Could not connect to the server.", variant: "destructive" });
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleDownload = async (image: ImageRecord) => {
+    setDownloadingId(image._id);
+    try {
+      await downloadImage(image.processedImageUrl, `purepixels_${image._id}.png`);
+    } catch (error) {
+      console.error("Download image error:", error);
+      toast({
+        title: "Download failed",
+        description: "Could not download the image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -150,15 +168,15 @@ export default function History() {
                         <Button
                           size="sm"
                           className="flex-1 rounded-xl bg-secondary hover:bg-border text-foreground font-medium h-9 text-xs border border-border"
-                          onClick={() => {
-                            const a = document.createElement("a");
-                            a.href = img.processedImageUrl;
-                            a.download = `purepixels_${img._id}.png`;
-                            a.click();
-                          }}
+                          onClick={() => handleDownload(img)}
+                          disabled={downloadingId === img._id}
                         >
-                          <Download className="mr-1 h-3.5 w-3.5 text-pixel" />
-                          Download PNG
+                          {downloadingId === img._id ? (
+                            <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin text-pixel" />
+                          ) : (
+                            <Download className="mr-1 h-3.5 w-3.5 text-pixel" />
+                          )}
+                          {downloadingId === img._id ? "Downloading..." : "Download PNG"}
                         </Button>
                         <Button
                           size="sm"
