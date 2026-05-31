@@ -1,4 +1,4 @@
-# <p align="center"><img src="Frame 1 (2).png" alt="PurePixels - AI Background Removal" width="100%" /></p>
+# <p align="center"><img src="Frame 1 (2).png" alt="PurePixels - AI Background Removal" width="10%" /></p>
 
 <p align="center">
   <a href="#features"><b>Features</b></a> |
