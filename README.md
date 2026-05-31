@@ -80,35 +80,69 @@ PurePixels empowers developers by offering custom integration scripts, structure
 
 ## ⚙️ System Architecture
 
-Below is the structured data-flow diagram showing how components interact securely across the platform:
+The blueprint below represents the modular layout of PurePixels' full-stack execution, illustrating the Client Subsystem, API Gateway layer, Mongoose Model Storage layer, and Cloud Integration Engine:
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor User as End User / Dev
-    participant Client as React SPA (Vite)
-    participant Server as Express Server
-    participant DB as MongoDB (Mongoose)
-    participant CD as Cloudinary CDN
-    participant API as Clipdrop AI API
-    
-    User->>Client: Uploads Image / Inputs Key
-    Client->>Server: POST /api/images/process (Multipart File + JWT)
-    Server->>DB: Check User Plan & Credits
-    alt Under Limit / Active Credits
-        Server->>CD: Upload Original Image (Optional)
-        CD-->>Server: Secure URL / CDN Link
-        Server->>API: Forward Image to AI Engine
-        API-->>Server: Return Processed PNG Buffer
-        Server->>CD: Upload Processed Image
-        CD-->>Server: Secure URL / CDN Link
-        Server->>DB: Record Usage & Deduct Credits
-        Server-->>Client: Processed URL + Usage Meta
-        Client-->>User: Render Interactive Compare Slider
-    else Credits Exhausted
-        Server-->>Client: 400 Bad Request (Insuff. Credits)
-        Client-->>User: Show Payment / Upgrade Toast
+graph TB
+    %% Core Subgraph Groups
+    subgraph ClientLayer ["🖥️ Client Subsystem (Vite / React 18 / Tailwind)"]
+        LandingPage["Landing Page<br/>(Hero / Features / FAQ)"]
+        Dashboard["Interactive Dashboard<br/>(Uploads / Comparison Slider)"]
+        DevPortal["Developer Portal<br/>(API Docs / Key Rotation)"]
+        PricingPage["Billing & Packages<br/>(Razorpay Checkout)"]
     end
+
+    subgraph ServerLayer ["⚙️ API Gateways & Middleware (Express.js)"]
+        APIRouter["Express API Router<br/>(/api)"]
+        AuthMiddleware["requireAuth Middleware<br/>(JWT Validate)"]
+        ApiKeyMiddleware["requireApiKey Middleware<br/>(Developer Access)"]
+        UploadHandler["Multer Middleware<br/>(Multipart Form-Data Handler)"]
+    end
+
+    subgraph ServiceLayer ["🛡️ Microservice Integration Engine"]
+        ClipdropAI["Clipdrop AI API<br/>(AI-Powered Segmentation)"]
+        CloudinaryCDN["Cloudinary Media CDN<br/>(Asset Hosting & Storage)"]
+        ResendSMTP["Resend Email API<br/>(Transactional OTP Onboarding)"]
+        RazorpaySDK["Razorpay Service<br/>(Payment Validation & Capture)"]
+    end
+
+    subgraph DataLayer ["🗄️ Database & Storage Layer (MongoDB)"]
+        MongooseODM["Mongoose Models"]
+        DB_Users["User Collection<br/>(Auth, Credits, Keys)"]
+        DB_Images["Image History Collection<br/>(CDN Urls, Creation Dates)"]
+        DB_Usage["Usage Track Collection<br/>(Daily Rate Limits)"]
+    end
+
+    %% Connection Flows
+    LandingPage --> PricingPage
+    Dashboard --> |Upload Image| UploadHandler
+    PricingPage --> |Initiate Payment| RazorpaySDK
+    DevPortal --> |Generate Keys| ApiKeyMiddleware
+
+    UploadHandler --> AuthMiddleware
+    AuthMiddleware --> APIRouter
+    ApiKeyMiddleware --> APIRouter
+
+    APIRouter --> |Upload Raw/Processed Assets| CloudinaryCDN
+    APIRouter --> |Segment Contour Request| ClipdropAI
+    APIRouter --> |Send OTP verification| ResendSMTP
+    RazorpaySDK --> |Deduce Credit Allocations| APIRouter
+
+    APIRouter --> MongooseODM
+    MongooseODM --> DB_Users
+    MongooseODM --> DB_Images
+    MongooseODM --> DB_Usage
+
+    %% Visual Styling Classes
+    classDef clientStyle fill:#1e1b4b,stroke:#4338ca,stroke-width:2px,color:#e0e7ff;
+    classDef serverStyle fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef serviceStyle fill:#022c22,stroke:#10b981,stroke-width:2px,color:#ecfdf5;
+    classDef dbStyle fill:#172554,stroke:#2563eb,stroke-width:2px,color:#eff6ff;
+
+    class LandingPage,Dashboard,DevPortal,PricingPage clientStyle;
+    class APIRouter,AuthMiddleware,ApiKeyMiddleware,UploadHandler serverStyle;
+    class ClipdropAI,CloudinaryCDN,ResendSMTP,RazorpaySDK serviceStyle;
+    class MongooseODM,DB_Users,DB_Images,DB_Usage dbStyle;
 ```
 
 ---
@@ -291,4 +325,3 @@ purepixels/
 
 ## 📜 License
 This project is licensed under the [MIT License](LICENSE). Feel free to customize and extend it as you see fit!
->>>>>>> 133f8a0 (Add README)
