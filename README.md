@@ -52,7 +52,8 @@ Here is a visual tour of the PurePixels application interface, showcasing its sl
 Discover a premium, interactive homepage with step-by-step guides, features grid, pricing previews, and a dynamic interactive section.
 
 <p align="center">
-  <img src="Screenshot 2026-05-31 013044.png" alt="PurePixels Homepage Hero" width="49%" />
+  <img src="Screenshot 2026-05-31 013657.png" alt="Interactive API Documentation" width="49%" />
+
   <img src="Screenshot 2026-05-31 013059.png" alt="PurePixels Features & How It Works" width="49%" />
 </p>
 
@@ -72,7 +73,7 @@ Upload any PNG/JPEG image (up to 10MB) and watch as the background removal engin
 PurePixels empowers developers by offering custom integration scripts, structured REST requests, and instant API Key rotation.
 
 <p align="center">
-  <img src="Screenshot 2026-05-31 013657.png" alt="Interactive API Documentation" width="49%" />
+  <img src="Screenshot 2026-05-31 013044.png" alt="PurePixels Homepage Hero" width="49%" />
   <img src="Screenshot 2026-05-31 014028.png" alt="Developer Keys & Settings" width="49%" />
 </p>
 
